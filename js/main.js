@@ -14,11 +14,15 @@ $(window).load(function() {
 
     function getIID() {
         return reg.pushManager.getSubscription().then(function(pushSubscription) {
-            console.log('currentSubscription endpoint:');
-            console.log(pushSubscription.endpoint);
-            var tmp = pushSubscription.endpoint.split('/');
-            IID = tmp[tmp.length - 1];
-            return IID;
+            if (pushSubscription && pushSubscription.endpoint) {
+                var tmp = pushSubscription.endpoint.split('/');
+                IID = tmp[tmp.length - 1];
+                return IID;
+            } else {
+                return false;
+            }
+        }, function(response, status) {
+            return false;
         });
     }
 
