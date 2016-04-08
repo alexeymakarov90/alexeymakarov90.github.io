@@ -11,7 +11,9 @@ $(window).load(function() {
      *	Server-side information, debug only!!!
      */
     var AUTH_KEY = "key=AIzaSyDoi7GISX6QvZSywVGB4kYTg7FigAWUoAw";
-    var GROUPD_NOTIFY_ID = "APA91bFVVubIbiSysbcGqgIUy1my7GZYE3xVvdBOBIQtzFf2WiFLpGaAfweXeR6Ee5r1ySp4kzoSAB4sM00rbYO3p2RgqaH8wjT5u19mzahARVuUPslzljw";
+    var GROUP_NOTIFY_ID = "APA91bEYRPam4wGq4xLl40yp8GBeqKmGsYgWMTp0JUuWvJ-qLYm_wzfpe5M8uGka-8W_xFB0e5iPgrJDpwTgZh_Gl37kTVcG2oSRGvlHhOI9o6tvJx3UBNo";
+    var GROUP_NOTIFY_NAME = "notifyKeyName2";
+    // var GROUP_NOTIFY_ID_old = "APA91bFVVubIbiSysbcGqgIUy1my7GZYE3xVvdBOBIQtzFf2WiFLpGaAfweXeR6Ee5r1ySp4kzoSAB4sM00rbYO3p2RgqaH8wjT5u19mzahARVuUPslzljw";
     var NUMERIC_PROJECT_ID = 42931818645;
 
     function getIID() {
@@ -146,6 +148,7 @@ $(window).load(function() {
                     crossDomain: true,
                     dataType: 'json',
                     headers: {
+                        "X-HTTP-Method-Override": "GET",
                         "Authorization": AUTH_KEY,
                         "Content-Type": 'application/json',
                         "project_id": NUMERIC_PROJECT_ID
@@ -153,8 +156,8 @@ $(window).load(function() {
                     url: "https://android.googleapis.com/gcm/notification",
                     data: JSON.stringify({
                         "operation": "add",
-                        "notification_key_name": "notifyKeyName",
-                        "notification_key": GROUPD_NOTIFY_ID,
+                        "notification_key_name": GROUP_NOTIFY_NAME,
+                        "notification_key": GROUP_NOTIFY_ID,
                         "registration_ids": [IID]
                     })
                 }).then(function(response) {
@@ -171,16 +174,16 @@ $(window).load(function() {
                     method: "POST",
                     crossDomain: true,
                     headers: {
+                        "X-HTTP-Method-Override": "GET",
                         "Authorization": AUTH_KEY,
                         "Content-Type": 'application/json',
-                        "project_id": NUMERIC_PROJECT_ID,
-                        "Access-Control-Allow-Origin": "*"
+                        "project_id": NUMERIC_PROJECT_ID
                     },
                     url: "https://android.googleapis.com/gcm/notification",
                     data: JSON.stringify({
                         "operation": "remove",
-                        "notification_key_name": "notifyKeyName",
-                        "notification_key": GROUPD_NOTIFY_ID,
+                        "notification_key_name": GROUP_NOTIFY_NAME,
+                        "notification_key": GROUP_NOTIFY_ID,
                         "registration_ids": [IID]
                     })
                 }).then(function(response) {
@@ -250,7 +253,7 @@ $(window).load(function() {
                     },
                     url: "https://android.googleapis.com/gcm/send",
                     data: JSON.stringify({
-                        "to": GROUPD_NOTIFY_ID,
+                        "to": GROUP_NOTIFY_ID,
                         "data": {
                             "somedata": 3
                         }
