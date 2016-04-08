@@ -8,14 +8,17 @@
 <body>
 <h1>Push Notification codelab</h1>
 <p>This page must be accessed using HTTPS or via localhost.</p>
-<button disabled>Subscribe</button>
-<button class="sw-iid">Get IID from SW</button>
-<button class="ajax" data-ajaxid="1">Get IID info</button>
+<button disabled>Subscribe (0)</button>
+<button class="sw-iid">Get RegID from SW (1)</button>
+<button class="ajax" data-ajaxid="1">Get RegID info</button>
 <button class="ajax" data-ajaxid="2">Subscribe to topics/global</button>
-<button class="ajax" data-ajaxid="3">Batch this IID to topics/global</button>
+<button class="ajax" data-ajaxid="3">Batch this RegID to topics/global</button>
+<button class="addToGroup">Subscribe this user to a group (2)</button>
+<button class="removeFromGroup">Unsubscribe this user from a group</button>
 <br/><br/><br/>
-<button class="push">Send push to this IID</button>
-<button class="pushTopic">Send push to topic (global)</button>
+<button class="push">Send push to this RegID (3)</button>
+<button class="pushTopic">Send push to topic "global" (bugged)</button>
+<button class="pushGroup">Send push to a group (4)</button>
 <script src="js/jquery-1.11.0.min.js"></script>
 <script src="js/main.js"></script>
 </body>

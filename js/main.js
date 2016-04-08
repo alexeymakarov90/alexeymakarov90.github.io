@@ -8,15 +8,29 @@ $(window).load(function() {
     var IID;
 
     /**
-     *	Debug only!!!
+     *	Server-side information, debug only!!!
      */
     var AUTH_KEY = "key=AIzaSyDoi7GISX6QvZSywVGB4kYTg7FigAWUoAw";
+    var GROUPD_NOTIFY_ID = "APA91bFVVubIbiSysbcGqgIUy1my7GZYE3xVvdBOBIQtzFf2WiFLpGaAfweXeR6Ee5r1ySp4kzoSAB4sM00rbYO3p2RgqaH8wjT5u19mzahARVuUPslzljw";
+    var NUMERIC_PROJECT_ID = 42931818645;
 
     function getIID() {
         return reg.pushManager.getSubscription().then(function(pushSubscription) {
             if (pushSubscription && pushSubscription.endpoint) {
-                var tmp = pushSubscription.endpoint.split('/');
-                IID = tmp[tmp.length - 1];
+                IID = pushSubscription.endpoint.split('/').slice(-1)[0];
+                return IID;
+            } else {
+                return false;
+            }
+        }, function(response, status) {
+            return false;
+        });
+    }
+
+    function getIID2() {
+        return reg.pushManager.getSubscription().then(function(pushSubscription) {
+            if (pushSubscription && pushSubscription.endpoint) {
+                IID = pushSubscription.endpoint.split('/').slice(-1)[0];
                 return IID;
             } else {
                 return false;
@@ -34,8 +48,7 @@ $(window).load(function() {
             sub = pushSubscription;
             console.log(sub);
             console.log('Subscribed! Endpoint:', sub.endpoint);
-            var tmp = sub.endpoint.split('/');
-            IID = tmp[tmp.length - 1];
+            IID = sub.endpoint.split('/').slice(-1)[0];
             console.log('IID:');
             console.log(IID);
             subscribeButton.textContent = 'Unsubscribe';
@@ -127,6 +140,58 @@ $(window).load(function() {
                     console.log('err');
                 });
             },
+            ajaxSubscribeToGroup: function() {
+                return $.ajax({
+                    method: "POST",
+                    crossDomain: true,
+                    dataType: 'json',
+                    headers: {
+                        "Authorization": AUTH_KEY,
+                        "Content-Type": 'application/json',
+                        "project_id": NUMERIC_PROJECT_ID
+                    },
+                    url: "https://android.googleapis.com/gcm/notification",
+                    data: JSON.stringify({
+                        "operation": "add",
+                        "notification_key_name": "notifyKeyName",
+                        "notification_key": GROUPD_NOTIFY_ID,
+                        "registration_ids": [IID]
+                    })
+                }).then(function(response) {
+                    console.log('success');
+                    console.log(response);
+                }, function(response, status) {
+                    console.log('err');
+                    console.log(response);
+                    console.log(status);
+                });
+            },
+            ajaxUnsubscribeFromGroup: function() {
+                return $.ajax({
+                    method: "POST",
+                    crossDomain: true,
+                    headers: {
+                        "Authorization": AUTH_KEY,
+                        "Content-Type": 'application/json',
+                        "project_id": NUMERIC_PROJECT_ID,
+                        "Access-Control-Allow-Origin": "*"
+                    },
+                    url: "https://android.googleapis.com/gcm/notification",
+                    data: JSON.stringify({
+                        "operation": "remove",
+                        "notification_key_name": "notifyKeyName",
+                        "notification_key": GROUPD_NOTIFY_ID,
+                        "registration_ids": [IID]
+                    })
+                }).then(function(response) {
+                    console.log('success');
+                    console.log(response);
+                }, function(response, status) {
+                    console.log('err');
+                    console.log(response);
+                    console.log(status);
+                });
+            },
             sendPushGCM: function() {
                 return $.ajax({
                     method: "POST",
@@ -174,11 +239,41 @@ $(window).load(function() {
                     console.log(status);
                     console.log('err');
                 });
+            },
+            sendPushGroup: function() {
+                return $.ajax({
+                    method: "POST",
+                    dataType: 'json',
+                    headers: {
+                        "Authorization": AUTH_KEY,
+                        "Content-Type": 'application/json'
+                    },
+                    url: "https://android.googleapis.com/gcm/send",
+                    data: JSON.stringify({
+                        "to": GROUPD_NOTIFY_ID,
+                        "data": {
+                            "somedata": 3
+                        }
+                    })
+                }).then(function(response) {
+                    console.log('success');
+                    console.log(response);
+                }, function(response, status) {
+                    console.log(response);
+                    console.log(status);
+                    console.log('err');
+                });
             }
         };
 
         $(".ajax").on('click', function(event) {
             test['ajax' + $(this).data('ajaxid')]();
+        });
+        $(".addToGroup").on('click', function(event) {
+            test.ajaxSubscribeToGroup();
+        });
+        $(".removeFromGroup").on('click', function(event) {
+            test.ajaxUnsubscribeFromGroup();
         });
         $(".sw-iid").on('click', function(event) {
             getIID().then(function(data) {
@@ -197,5 +292,11 @@ $(window).load(function() {
                 console.log('topic push sent');
             });
         });
+        $(".pushGroup").on('click', function(event) {
+            test.sendPushGroup().then(function(data) {
+                console.log('topic push sent');
+            });
+        });
+
     }
 });
