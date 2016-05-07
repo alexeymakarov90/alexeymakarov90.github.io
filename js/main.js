@@ -10,10 +10,11 @@ $(window).load(function() {
     /**
      *	Server-side information, debug only!!!
      */
+
     var AUTH_KEY = "key=AIzaSyDoi7GISX6QvZSywVGB4kYTg7FigAWUoAw";
-    var GROUP_NOTIFY_ID = "APA91bEYRPam4wGq4xLl40yp8GBeqKmGsYgWMTp0JUuWvJ-qLYm_wzfpe5M8uGka-8W_xFB0e5iPgrJDpwTgZh_Gl37kTVcG2oSRGvlHhOI9o6tvJx3UBNo";
-    var GROUP_NOTIFY_NAME = "notifyKeyName2";
-    // var GROUP_NOTIFY_ID_old = "APA91bFVVubIbiSysbcGqgIUy1my7GZYE3xVvdBOBIQtzFf2WiFLpGaAfweXeR6Ee5r1ySp4kzoSAB4sM00rbYO3p2RgqaH8wjT5u19mzahARVuUPslzljw";
+    var GROUP_NOTIFY_ID = "APA91bFQlDw7vrHeAouEBu92c1TuVCFyjQW_8mYQhQwDVLfakQieBwke77gBgPzL3OIn4uXwLdwZv4Sf3dnDl3O6iczFKfHXOY8PvucM4jYWScw7D5TeYBg";
+    var GROUP_NOTIFY_NAME = "key1";
+
     var NUMERIC_PROJECT_ID = 42931818645;
 
     function getIID() {
@@ -24,21 +25,6 @@ $(window).load(function() {
             } else {
                 return false;
             }
-        }, function(response, status) {
-            return false;
-        });
-    }
-
-    function getIID2() {
-        return reg.pushManager.getSubscription().then(function(pushSubscription) {
-            if (pushSubscription && pushSubscription.endpoint) {
-                IID = pushSubscription.endpoint.split('/').slice(-1)[0];
-                return IID;
-            } else {
-                return false;
-            }
-        }, function(response, status) {
-            return false;
         });
     }
 
@@ -75,10 +61,27 @@ $(window).load(function() {
         navigator.serviceWorker.register('sw.js').then(function() {
             return navigator.serviceWorker.ready;
         }).then(function(serviceWorkerRegistration) {
-            reg = serviceWorkerRegistration;
-            subscribeButton.disabled = false;
+            reg = serviceWorkerRegistration;            
             console.log('Service Worker is ready :^)', reg);
-            getIID();
+            subscribeButton.disabled = false;      
+            reg.pushManager.getSubscription().then(function(subscription){
+                console.log(1);
+                console.log(subscription);
+                if(subscription){
+                    console.log('subscrebed');
+                    sub = subscription;
+                    IID = subscription.endpoint.split('/').slice(-1)[0];
+                    subscribeButton.textContent = 'Unsubscribe';
+                    isSubscribed = true;
+                }
+                else{
+                    isSubscribed = false;
+                    IID = null;
+                    console.log('no subs');
+                }
+            }, function(){
+                console.log(2);
+            });
         }).catch(function(error) {
             console.log('Service Worker Error :^(', error);
         });
