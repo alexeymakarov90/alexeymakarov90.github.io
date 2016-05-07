@@ -59,11 +59,12 @@ $(window).load(function() {
     if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported');
         navigator.serviceWorker.register('sw.js').then(function() {
+            console.log(111);
             return navigator.serviceWorker.ready;
         }).then(function(serviceWorkerRegistration) {
             reg = serviceWorkerRegistration;            
             console.log('Service Worker is ready :^)', reg);
-            subscribeButton.disabled = false;      
+            subscribeButton.disabled = false;
             reg.pushManager.getSubscription().then(function(subscription){
                 console.log(1);
                 console.log(subscription);
@@ -304,5 +305,8 @@ $(window).load(function() {
             });
         });
 
+    }
+    else{
+        console.log('no sw');
     }
 });
